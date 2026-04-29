@@ -73,7 +73,7 @@ Copy `.env.example` to `.env` and adjust as needed. All variables are optional â
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MCP_USER_AGENT_URL` | `https://github.com/datacite-mcp` | URL included in the HTTP User-Agent header |
+| `MCP_USER_AGENT_URL` | `https://github.com/alexwade/datacite-mcp` | URL included in the HTTP User-Agent header |
 | `MCP_USER_AGENT_EMAIL` | *(empty)* | Contact email for DataCite's polite pool |
 | `DATACITE_RATE_LIMIT_RPS` | `10` | Max API requests per second |
 | `CACHE_DOI_TTL_SECONDS` | `3600` | DOI cache TTL (1 hour) |
