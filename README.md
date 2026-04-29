@@ -1,6 +1,6 @@
 # DataCite MCP Server
 
-A Model Context Protocol (MCP) server that wraps the [DataCite REST API](https://support.datacite.org/docs/api), giving Claude and other MCP clients read-only access to DataCite's index of 125M+ research DOIs. No API key is required. The server runs as a local stdio process and communicates with Claude Desktop via the MCP protocol, enabling natural-language queries against the full DataCite catalogue — searching by keyword, person, funder, or repository; retrieving full metadata records; formatting citations in multiple styles; and exploring relationships between research outputs.
+A Model Context Protocol (MCP) server that wraps the [DataCite REST API](https://support.datacite.org/docs/api), giving Claude and other MCP clients read-only access to DataCite's index of 125M+ research DOIs. No API key is required. The server runs as a local stdio process and communicates with Claude Desktop via the MCP protocol, enabling natural-language queries against the full DataCite catalogue: searching by keyword, person, funder, or repository; retrieving full metadata records; and exploring relationships between research outputs.
 
 ## Claude Desktop Configuration
 
