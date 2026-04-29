@@ -1,0 +1,16 @@
+# Word lock files and documents
+~$*
+*.docx
+
+# Previously generated tarballs
+*.tgz
+
+# Planning/scripting files
+*.py
+DESIGN.md
+
+# Source TypeScript (dist/ is sufficient to run)
+src/
+
+# Build config (not needed at runtime)
+tsconfig.json

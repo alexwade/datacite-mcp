@@ -1,0 +1,161 @@
+You are producing a metadata quality and activity report for a DataCite repository.
+
+TASK: Generate a comprehensive summary for **{{repo_name}}** (client_id: `{{client_id}}`) covering the last 5 years ({{start_year}}–{{current_year}}), with metadata quality assessment on a sample of 25 recent records.
+
+Execute the following steps in order. Make all independent API calls in parallel where possible.
+
+=== STEP 1: Repository identification ===
+
+Call `get_repository` with id = "{{client_id}}".
+
+Capture: name, alternateName, providerId, clientType, year registered (from the "created" field), prefixes, re3data ID, language(s), isActive.
+
+If the repository is not found, STOP and tell the user: "Repository '{{client_id}}' was not found in DataCite. You can browse repositories at https://commons.datacite.org/repositories."
+
+=== STEP 2: Total lifetime DOI count ===
+
+Call `search_dois` with:
+- client_id = "{{client_id}}"
+- page_size = 1
+
+Capture `total_results` as the lifetime DOI count.
+
+=== STEP 3: Year-by-year trend ===
+
+For each of these years: {{year_list}}
+
+Call `search_dois` with:
+- client_id = "{{client_id}}"
+- published_year = <year>
+- page_size = 1
+
+Capture total_results for each year to build the annual trend.
+
+=== STEP 4: Resource type distribution (most recent complete year = {{prev_year}}) ===
+
+For each of these resource types, call `search_dois` with:
+- client_id = "{{client_id}}"
+- published_year = {{prev_year}}
+- resource_type = <type>
+- page_size = 1
+
+Types to check: Dataset, Text, Software, Collection, Image, ComputationalNotebook, Preprint, JournalArticle, ConferencePaper, Report, Other
+
+Skip types that return 0. Record total_results for each non-zero type.
+
+=== STEP 5: Metadata quality sample ===
+
+Call `search_dois` with:
+- client_id = "{{client_id}}"
+- sort = "-created"
+- page_size = 25
+
+For each DOI returned, inspect the following fields and aggregate into percentages:
+
+**Complete:**
+- Title present
+- Description/abstract present AND >100 chars
+- Subjects/keywords present (avg count per record)
+- rightsList present with rightsURI
+- fundingReferences present
+
+**Correct:**
+- resourceTypeGeneral on controlled enum vs. free-text only
+- DataCite schema version distribution
+
+**Connected:**
+- Creators with ORCID (count with / count without)
+- Creators with ROR-identified affiliation
+- Funder identifiers present (Crossref Funder ID or ROR)
+- relatedIdentifiers present (avg count per record)
+
+If you find records with sparse metadata, optionally call `get_doi_schema_xml` on 2–3 records to inspect the raw XML.
+
+=== STEP 6: Render the report ===
+
+Format as markdown using this structure:
+
+---
+
+# Repository Summary: {{repo_name}}
+
+**Client ID:** `{{client_id}}` • **Provider:** {providerId} • **Registered:** {year}
+**Status:** {Active / Inactive} • **Prefixes:** {prefixes joined with ", "}
+{If re3data ID present: **re3data:** [{id}](https://re3data.org/repository/{id})}
+
+## 📊 Volume at a glance
+
+- **Lifetime DOIs:** {total formatted with commas}
+- **Last 5 years ({{start_year}}–{{current_year}}):** {sum formatted}
+- **Most recent full year ({{prev_year}}):** {count formatted} DOIs
+
+### Annual trend
+
+Render an ASCII bar chart using block characters (█), scaled to the highest-count year. One bar per year. Example format:
+```
+2020 │ ████████                    12,340
+2021 │ ██████████████              21,500
+```
+
+Flag any year with ≥30% change from the prior year with 📈 or 📉 and offer a likely explanation if obvious (e.g., COVID impact in 2020, known platform migrations).
+
+## 🏷️ Resource type distribution ({{prev_year}})
+
+Horizontal bar chart or table with percentages. Highlight the top 3 types. If "Other" or "Text" is large (>20%), flag it: "⚠️ Large Other/Text bucket may indicate miscategorized records — impacts discoverability and OpenAlex categorization."
+
+## 📋 Metadata quality (3 C's assessment)
+
+Based on a sample of 25 recent records:
+
+### Complete
+
+| Field | Coverage |
+|---|---|
+| Title | {xx%} |
+| Abstract/Description (>100 chars) | {xx%} |
+| Subjects/Keywords | {xx%} (avg {n} per record) |
+| Rights statement with URI | {xx%} |
+| Funding information | {xx%} |
+
+### Correct
+
+- Resource type controlled vocab: {xx%} on enum vs. {xx%} free-text only
+- Schema version distribution: {list versions and counts}
+- {Flag any systematic issues, e.g., "All records use 'Text' even when content appears to be Software"}
+
+### Connected
+
+| Connection type | Coverage |
+|---|---|
+| Creators with ORCID | {xx%} |
+| Affiliations with ROR ID | {xx%} |
+| Funder identifiers (Crossref/ROR) | {xx%} |
+| Related identifiers | {xx%} (avg {n} per record) |
+
+## 🎯 Recommendations
+
+Produce 3–5 prioritized, actionable recommendations. For each:
+- **Priority:** High / Medium / Low
+- **Issue:** what was observed
+- **Impact:** why it matters (discoverability, FAIR, OpenAlex, XPAC inclusion, citation tracking)
+- **Action:** specific next step
+
+Apply these thresholds:
+- ORCID coverage < 40% → **High** (researcher attribution, XPAC inclusion)
+- ROR affiliation coverage < 30% → **High** (institutional analytics, XPAC)
+- Large Other/Text resource type bucket → **High** (discoverability, OpenAlex categorization)
+- Abstract/description coverage < 60% → **Medium** (full-text search quality)
+- Missing rightsList → **Medium** (licensing clarity, reuse)
+- Subject/keyword coverage < 50% → **Medium**
+- Low relatedIdentifier density → **Low–Medium** (graph connectedness)
+- Schema version < 4.4 → **Low** (recommend upgrade for ComputationalNotebook, Instrument types)
+
+## ⚠️ Caveats
+
+- Metadata quality is based on a sample of 25 records sorted by creation date; older records may show different patterns.
+- Citation and view counts are not included; if requested separately, note they reflect intra-DataCite-network activity only.
+- Quality signals like "affiliation has ROR" depend on how metadata is structured in the DataCite record — a repository may collect richer data locally that isn't surfaced here.
+
+---
+
+*Report generated for `{{client_id}}` ({{repo_name}}) on {{today}}.*

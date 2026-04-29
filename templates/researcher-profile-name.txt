@@ -1,0 +1,91 @@
+You are generating a researcher profile based on DataCite records.
+
+The user has provided a name: "{{name}}"
+
+⚠️ IMPORTANT: Name-based search is unreliable in scholarly metadata due to name ambiguity, transliteration variants, and inconsistent formatting. Clearly communicate this to the user before proceeding.
+
+STEP 1 — Fetch works by name:
+
+First, tell the user: "Name-based searches can return records from multiple people with similar names. I'll search and present candidates for you to select from."
+
+Call `search_by_person` with:
+- name = "{{name}}"
+- role = "any"
+- page_size = 50
+
+STEP 2 — Disambiguation:
+
+Group returned records by distinct creator entries that match the name. For each distinct candidate, identify:
+- Any ORCID iDs present
+- Distinct affiliations
+- Subject areas and resource types used
+- Year range of works
+
+Present candidates as a table:
+| # | Likely ORCID (if any) | Affiliation(s) | Works | Subject areas | Year range |
+|---|---|---|---|---|---|
+
+Then ASK THE USER which candidate to profile. Do NOT generate a full profile across ambiguous matches — this produces misleading output and may conflate different researchers' records.
+
+Exception: If all returned records share a single ORCID, proceed to STEP 3 automatically and note that the match was unambiguous.
+
+If zero results are returned, tell the user and suggest:
+- Trying name variants ("J. Smith" vs. "John Smith", with/without middle initial)
+- Using "Last, First" format (e.g., "{{name_reversed}}")
+- Searching ORCID directly at https://orcid.org/orcid-search/search to find their ORCID iD, then re-running this prompt with the ORCID
+
+STEP 3 — Once the user selects a candidate (or if unambiguous):
+
+Re-run `search_by_person` scoped to the confirmed ORCID if one was identified, or continue with the name-based results for the selected candidate.
+
+Then generate the same profile format as the ORCID path:
+
+# Researcher Profile: {name}
+
+{If ORCID confirmed: **ORCID:** [{orcid}](https://orcid.org/{orcid})}
+**Affiliation(s):** {unique affiliations}
+
+## 📚 Publication overview
+
+- **Total DataCite works:** {n}
+- **Year range:** {earliest} – {latest}
+- **Most productive year:** {year} ({count} works)
+
+## 🏷️ By resource type
+
+Table sorted by count descending: | Resource Type | Count | % |
+
+## 📅 Output over time
+
+ASCII bar chart (█), one bar per year.
+
+## 👥 Top collaborators
+
+Top 10 co-authors (excluding the profile subject), with ORCID if available and co-authored work count.
+
+## 🏛️ Publishers / Repositories
+
+Top 5 publishers or repositories.
+
+## 💰 Funding
+
+Unique funders with count of funded works (if any funding data present).
+
+## ⭐ Highlighted works
+
+Top 5 by citation count (if any > 0), otherwise 5 most recent. Format each as:
+1. **{title}** ({year})
+   - {first 3 creators} {et al. if more}
+   - {resource_type} · {publisher}
+   - [{doi}](https://doi.org/{doi}){if citations: · {n} citations (intra-DataCite network)}
+
+## ⚠️ Caveats
+
+- This profile reflects only works registered with DataCite. Most journal articles (which use Crossref DOIs) are NOT included.
+- Citation counts reflect intra-DataCite-network citations only.
+- Collaborator counts depend on how each record was registered by the depositing repository.
+- This profile was generated from a name-based search. Name ambiguity means some included works may belong to a different person. Providing an ORCID iD gives a more accurate profile.
+
+---
+
+*Profile generated on {{today}} from DataCite metadata.*

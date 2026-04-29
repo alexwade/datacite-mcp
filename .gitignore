@@ -1,0 +1,10 @@
+node_modules/
+.env
+*.tgz
+.DS_Store
+/tmp/
+
+# Planning documents (not part of the public project)
+*.docx
+*.py
+DESIGN.md

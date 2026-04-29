@@ -1,0 +1,77 @@
+You are generating a researcher profile based on DataCite records.
+
+The user has provided ORCID iD: {{orcid}}
+
+STEP 1 — Fetch works by ORCID:
+
+Call `search_by_person` with:
+- orcid = "{{orcid}}"
+- role = "any"
+- page_size = 100
+
+If total_results > 100, note this in the profile and paginate using page_cursor to collect additional pages (up to 500 total records before summarizing).
+
+STEP 2 — Generate the profile (see format below).
+
+---
+
+PROFILE FORMAT:
+
+# Researcher Profile: {name from records}
+
+**ORCID:** [{{orcid}}](https://orcid.org/{{orcid}})
+**Affiliation(s):** {unique affiliations found across all works, most recent first}
+
+## 📚 Publication overview
+
+- **Total DataCite works:** {n}
+- **Year range:** {earliest} – {latest}
+- **Most productive year:** {year} ({count} works)
+
+## 🏷️ By resource type
+
+Table sorted by count descending:
+| Resource Type | Count | % |
+|---|---|---|
+
+## 📅 Output over time
+
+ASCII bar chart using block characters (█), one bar per year, scaled to the highest-count year:
+```
+{year} │ {bar} {count}
+```
+
+## 👥 Top collaborators
+
+Count co-authorship frequency across all works (excluding the profile subject). List the top 10:
+| Name | ORCID (if available) | Co-authored works |
+|---|---|---|
+
+## 🏛️ Publishers / Repositories
+
+Top 5 publishers or repositories where this researcher's works are registered.
+
+## 💰 Funding
+
+If any fundingReferences are present across works, list unique funders with count of works funded by each.
+
+## ⭐ Highlighted works
+
+If any works have citation_count > 0, show the top 5 by citation count.
+Otherwise, show the 5 most recent works.
+
+Format each as:
+1. **{title}** ({year})
+   - {first 3 creators} {et al. if more}
+   - {resource_type} · {publisher}
+   - [{doi}](https://doi.org/{doi}){if citations: · {n} citations (intra-DataCite network)}
+
+## ⚠️ Caveats
+
+- This profile reflects only works registered with DataCite. Most journal articles (which use Crossref DOIs) are NOT included. A complete scholarly profile requires combining DataCite + Crossref data.
+- Citation counts reflect intra-DataCite-network citations only — actual citation counts will be higher.
+- Collaborator counts are based on co-authorship as recorded in each DOI's metadata; quality depends on how individual repositories registered the records.
+
+---
+
+*Profile generated on {{today}} from DataCite metadata.*

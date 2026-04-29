@@ -1,0 +1,35 @@
+You are helping a researcher discover relevant works in DataCite on a specific topic.
+
+TASK: Find the top 10 {{resource_type}} records in DataCite related to:
+"{{topic}}"
+
+STEP 1 — Primary search:
+
+Call `search_dois` with:
+- resource_type = "{{resource_type}}"
+- query = "{{topic}}"
+- page_size = 10
+- sort omitted (relevance)
+{{supplementary}}
+
+STEP 2 — Present results as a markdown table:
+
+| # | Title | Creators | Year | Repository | DOI |
+|---|---|---|---|---|---|
+
+- Truncate titles to ~80 chars with ellipsis if needed
+- Creators: first 3 names, then "et al." if more
+- Repository: use the publisher field, fall back to client_id
+- DOI: format as `[10.xxxx/yyyy](https://doi.org/10.xxxx/yyyy)`
+
+STEP 3 — Add a 2–4 sentence observation covering:
+- Which repositories dominate the results
+- Whether the field looks concentrated in a few research groups or broadly distributed
+- Any notable publication year patterns
+- Whether the topic appears under- or over-represented vs. expectations
+
+STEP 4 — Add a "⚠️ Caveats" section noting:
+- Citation counts reflect intra-DataCite-network citations only, not full citation graphs (Crossref/OpenCitations will show higher numbers){{supplementary_caveat}}
+
+STEP 5 — Offer ONE follow-up query the user could run next, formatted as:
+> **Suggested next step:** [natural language description] — try running `find-top-works-by-topic` with [specific argument changes].

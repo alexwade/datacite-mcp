@@ -1,0 +1,25 @@
+{
+  "name": "datacite-mcp",
+  "version": "0.4.0",
+  "description": "MCP server for the DataCite REST API",
+  "type": "module",
+  "bin": { "datacite-mcp": "dist/index.js" },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "inspector": "npx @modelcontextprotocol/inspector node dist/index.js",
+    "test": "node --test tests/prompts.test.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.0",
+    "bottleneck": "^2.19.5",
+    "dotenv": "^16.4.5",
+    "lru-cache": "^11.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  }
+}
