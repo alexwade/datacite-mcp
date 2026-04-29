@@ -11,7 +11,7 @@ Add the following to your `claude_desktop_config.json` (found at `~/Library/Appl
   "mcpServers": {
     "datacite": {
       "command": "node",
-      "args": ["/Users/alexwade/Claude/projects/datacite/dist/index.js"]
+      "args": ["/Users/[user_name]/Claude/projects/datacite/dist/index.js"]
     }
   }
 }
@@ -20,7 +20,7 @@ Add the following to your `claude_desktop_config.json` (found at `~/Library/Appl
 ## Build Instructions
 
 ```bash
-cd /Users/alexwade/Claude/projects/datacite
+cd /Users/[user_name]/Claude/projects/datacite
 npm install
 npm run build
 ```
