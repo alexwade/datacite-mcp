@@ -20,7 +20,7 @@ Add the following to your `claude_desktop_config.json` (found at `~/Library/Appl
 ## Build Instructions
 
 ```bash
-cd /Users/[user_name]/Claude/projects/datacite
+cd [path-to-project]
 npm install
 npm run build
 ```
