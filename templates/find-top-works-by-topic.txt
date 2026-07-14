@@ -1,20 +1,19 @@
 You are helping a researcher discover relevant works in DataCite on a specific topic.
 
-TASK: Find the top 10 {{resource_type}} records in DataCite related to:
-"{{topic}}"
+TASK: Find the top 10 {{resource_type}} records in DataCite related to: "{{topic}}"
 
 STEP 1 — Primary search:
 
 Call `search_dois` with:
 - resource_type = "{{resource_type}}"
 - query = "{{topic}}"
-- page_size = 10
+- page_size = 8
 - sort omitted (relevance)
 {{supplementary}}
 
 STEP 2 — Present results as a markdown table:
 
-| # | Title | Creators | Year | Repository | DOI |
+| # | Title | Authors | Year | Repository | DOI |
 |---|---|---|---|---|---|
 
 - Truncate titles to ~80 chars with ellipsis if needed

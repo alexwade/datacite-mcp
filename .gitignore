@@ -6,5 +6,4 @@ node_modules/
 
 # Planning documents (not part of the public project)
 *.docx
-*.py
 DESIGN.md
